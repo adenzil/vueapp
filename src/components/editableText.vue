@@ -9,10 +9,12 @@
 
 
 <script>
-	
+
+    import { mapMutations } from 'vuex'
+
 	export default {
 		name: 'editableText',
-		props: ['text','tag','pol'],
+		props: ['source','type','route','text','tag'],
 		data () {
 			return {
 				editing: false,
@@ -20,13 +22,13 @@
 			}
 		},
 		methods: {
+			...mapMutations(['saveState']),
 			edit: function() {
 				this.editing = true;
 			},
 			save: function() {
 				this.editing = false;
-				console.log(this.pol,this.tag)
-				this.$emit('saveText', this.newText);
+				this.saveState({'source':this.source, 'type':this.type, 'route':this.route, 'text':this.newText,});
 			}
 		}
 	}
