@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Trackers from '@/components/Trackers'
 import TrackerData from '@/components/TrackerData'
-import MyChart from '@/components/MyChart'
+// import MyChart from '@/components/MyChart'
 
 Vue.use(Router)
 

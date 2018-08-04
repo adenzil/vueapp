@@ -1,50 +1,49 @@
 <template>
 	<div class="Tracker">
 		
-        <editableText source="TrackerData" type="name" :route="route" :text="TrackerData.name" pol="TrackerData.name" tag="h1" v-on:saveText="saveText"></editableText>
+        <editableText source="TrackerData" type="name" :route="$route.params.element" :text="TrackerData.name" pol="TrackerData.name" tag="h2" v-on:saveText="saveText"></editableText>
         
-        <editableText source="TrackerData" type="description" :route="route" :text="TrackerData.description" tag="h3" ></editableText>
+        <editableText source="TrackerData" type="description" :route="$route.params.element" :text="TrackerData.description" tag="h3" ></editableText>
 
         <br><br>
 
-        <router-link :to="{name:'Trackers'}"> GO BACK</router-link>
-        <button v-on:click="deleteAllEntries">Clear all</button>
-        <ul>
-            <li class="entries" v-for="(value, index) in TrackerData.values">
+        <router-link class="btn btn-secondary" :to="{name:'Trackers'}"> GO BACK</router-link>
+        <button class="btn btn-danger ml-3" v-on:click="deleteAllEntries">Clear all</button>
+        <br><br>
+        <ul class="list-group">
+            <li class="entries list-group-item" v-for="(value, index) in TrackerData.values">
                 <span v-if="!value.edit">{{value.key}} : {{value.value}}</span>
                 <input type="text" v-if="value.edit" v-model="value.key">
                 <input type="number" v-if="value.edit" v-model="value.value">
-                <button v-on:click="editNewEntry(index)" v-if="!value.edit">edit</button>
-                <button v-on:click="editNewEntry(index)" v-if="value.edit">save</button>
-                <button v-on:click="deleteEntry(index)">X</button>
+                <font-awesome-icon class="ml-2" v-on:click="editNewEntry(index)" v-if="!value.edit" icon="pen" />
+                <font-awesome-icon class="ml-2" v-on:click="editNewEntry(index)" v-if="value.edit" icon="check" size="lg" />
+                <font-awesome-icon class="ml-2" v-on:click="deleteEntry(index)" icon="times" size="lg" />
             </li>
         </ul>
         <br>
         <form v-on:submit="addValue">
             <input type="text" name="TrackerData.newKey" v-model="TrackerData.newKey" placeholder="Log a new entry" required> : <input type="number" name="TrackerData.newValue" v-model="TrackerData.newValue" placeholder="Add a number" required>
-            <input type="submit">
+            <input class="btn btn-success ml-3" type="submit">
         </form>
         <br>
-        <MyChart :chartData="chartData" :options="TrackerData.options"></MyChart>
+        <select v-bind:value="selectedChart" v-on:change="changeSelectedChart">
+            <option v-for="value in charts" :value="value">{{value}}</option>
+        </select>
+        <component v-bind:is="selectedChart" :chartData="chartData" :options="TrackerData.options"></component>
     </div>
 </template>
 
 <script>
 
-    import MyChart from '@/components/MyChart'
+    import * as charts from '@/components/chart/Bar'
     import editableText from '@/components/editableText'
     import { mapMutations } from 'vuex'
 
     export default {
         name: 'TrackerData',
         components : {
-            MyChart,
+            ...charts,
             editableText
-        },
-        data () {
-            return {
-                route: this.$route.params.element,
-            }
         },
         computed: {
             TrackerData: function() {
@@ -55,7 +54,7 @@
                 return {
                     labels: self.TrackerData.values.map(value => value.key),
                     datasets: [{
-                       label: 'Data One',
+                       label: self.TrackerData.name,
                        backgroundColor: '#f87979',
                        pointBackgroundColor: 'white',
                        borderWidth: 1,
@@ -64,24 +63,33 @@
                     }]
                 }
             },
+            charts: function(){
+                return Object.keys(charts);
+            },
+            selectedChart: function() {
+                return this.TrackerData.options.type;
+            }
         },
         methods: {
-            ...mapMutations(['editTrackerData','addTrackerData','deleteTrackerData','deleteAllTrackerData']),
+            ...mapMutations(['editTrackerData','addTrackerData','deleteTrackerData','deleteAllTrackerData','updateChartType']),
             editNewEntry: function(index) {
-                this.editTrackerData({'route':this.route, 'index':index});
+                this.editTrackerData({'route':this.$route.params.element, 'index':index});
             },
             saveText: function(newText) {
                 console.log(this.TrackerData.name)
             },
             addValue: function(e) {
                 e.preventDefault();
-                this.addTrackerData(this.route);
+                this.addTrackerData(this.$route.params.element);
             },
             deleteEntry: function(index) {
-                this.deleteTrackerData(this.route, index);
+                this.deleteTrackerData(this.$route.params.element, index);
             },
             deleteAllEntries: function() {
-                this.deleteAllTrackerData(this.route);
+                this.deleteAllTrackerData(this.$route.params.element);
+            },
+            changeSelectedChart: function(value,vl) {
+                this.updateChartType({route: this.$route.params.element, value: value.target.value})
             }
         }
     }

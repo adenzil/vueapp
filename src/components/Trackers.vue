@@ -1,15 +1,19 @@
 <template>
 	<div class="Element">
-        <editableText source="Trackers" type="name" :text="Trackers.name" tag="h1"></editableText>
+        <editableText source="Trackers" type="name" :text="Trackers.name" tag="h2"></editableText>
         <editableText source="Trackers" type="description" :text="Trackers.description" tag="h3"></editableText>
         <br>
-        <button v-on:click="deleteAllTrackers()">Delete all trackers</button>
-        <ul>
-            <li class="entries" v-for="(value, index) in Trackers.values">
-                <router-link :to="index">{{index}}</router-link>
-                <button v-on:click="deleteEntry(index,value)">X</button>
+        <button class="btn btn-danger" v-on:click="deleteAllTrackers()">Delete all trackers</button>
+        <br>
+        <br>
+        <ul class="list-group">
+            <li class="entries list-group-item d-flex justify-content-between align-items-center" v-for="(value, index) in Trackers.values">
+                <router-link class="" :to="index">{{index}}</router-link>
+                <span class="badge badge-primary badge-pill">{{value.values.length}}</span>
+                <!-- <button v-on:click="deleteEntry(index,value)">X</button> -->
             </li>
         </ul>
+        <br>
         <form v-on:submit="addElement">
             <input type="text" name="Trackers.newTrackerName" v-model="Trackers.newTrackerName" placeholder="Add new Tracker">
             <input type="submit">

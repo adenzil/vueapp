@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from './router'
 
 Vue.use(Vuex)
 
@@ -23,7 +24,8 @@ const options = {
        display: true
     },
     responsive: true,
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
+    type: 'LineChart'
 }
 
 export const store = new Vuex.Store({
@@ -100,11 +102,16 @@ export const store = new Vuex.Store({
                     if(payload.type == 'name') {
                         Vue.set(state.Trackers.values,payload.text,state.Trackers.values[payload.route]);
                         Vue.delete(state.Trackers.values,payload.route);
+                        changeSource = state.Trackers.values[payload.text];
+                    }else {
+                        changeSource = state.Trackers.values[payload.route];
                     }
-                    changeSource = state.Trackers.values[payload.text];
                     break;
             }
             Vue.set(changeSource,payload.type,payload.text);
+            if(payload.source == 'TrackerData' && payload.type == 'name') {
+                router.replace(payload.text);
+            }
 		},
 		deleteTracker(state, payload) {
 			Vue.delete(state.Trackers.values,payload);
@@ -115,6 +122,9 @@ export const store = new Vuex.Store({
 		updateTrackerDescription(state,payload) {
 			console.log(this.$refs)
 		},
+        updateChartType(state,payload) {
+            state.Trackers.values[payload.route].options.type = payload.value;
+        },
 		addTrackerData(state, payload) {
 			var currentTracker = state.Trackers.values[payload]
 			currentTracker.values.push({'key':currentTracker.newKey, 'value':currentTracker.newValue, 'edit': false})
@@ -127,7 +137,6 @@ export const store = new Vuex.Store({
             state.Trackers.values[payload.route].values[payload.index].edit = !state.Trackers.values[payload.route].values[payload.index].edit;
         },
 		deleteAllTrackerData(state,payload) {
-			// state.Trackers.values[payload].values = {};
             Vue.set(state.Trackers.values[payload], 'values', [])
 		},
 		test(state) {
