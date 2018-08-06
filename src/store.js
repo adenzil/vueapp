@@ -41,7 +41,8 @@ export const store = new Vuex.Store({
                     values: [],
                     newKey: null,
                     newValue:null,
-                    options: options
+                    options: options,
+                    chartData: this.chartData
             	},
             	'temperature' : {
             		name: 'temperature',
@@ -50,7 +51,8 @@ export const store = new Vuex.Store({
                     values: [],
                     newKey: null,
                     newValue:null,
-                    options: options
+                    options: options,
+                    chartData: this.chartData
             	},
             },
             newTrackerName:null,
@@ -62,7 +64,21 @@ export const store = new Vuex.Store({
             values: [],
             newKey: null,
             newValue:null,
-            options: options
+            options: options,
+            chartData: this.chartData
+        },
+        chartData: function(TrackerData) {
+            return {
+                labels: TrackerData.values.map(value => value.key),
+                datasets: [{
+                   label: TrackerData.name,
+                   backgroundColor: '#f87979',
+                   pointBackgroundColor: 'white',
+                   borderWidth: 1,
+                   pointBorderColor: '#249EBF',
+                   data: TrackerData.values.map(value => value.value)
+                }]
+            }
         }
 	},
 	getters: {
@@ -71,7 +87,10 @@ export const store = new Vuex.Store({
 		},
 		TrackerData(state) {
 			return route => state.Trackers.values[route];
-		}
+		},
+        getChartData(state) {
+            return data => state.chartData(data);
+        }
 	},
 	mutations: {
 		initialiseStore(state) {
@@ -149,7 +168,7 @@ export const store = new Vuex.Store({
         deleteAllTrackers(state) {
             Vue.set(state.Trackers,'values',{});
             localStorage.setItem('Trackers', JSON.stringify(state));
-        }
+        },
 	}
 })
 

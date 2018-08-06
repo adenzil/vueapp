@@ -49,19 +49,8 @@
             TrackerData: function() {
                 return this.$store.getters.TrackerData(this.$route.params.element);
             },
-            chartData: function() {
-                var self = this;
-                return {
-                    labels: self.TrackerData.values.map(value => value.key),
-                    datasets: [{
-                       label: self.TrackerData.name,
-                       backgroundColor: '#f87979',
-                       pointBackgroundColor: 'white',
-                       borderWidth: 1,
-                       pointBorderColor: '#249EBF',
-                       data: self.TrackerData.values.map(value => value.value)
-                    }]
-                }
+            chartData: function() {     
+                return this.$store.getters.getChartData(this.TrackerData);
             },
             charts: function(){
                 return Object.keys(charts);
@@ -91,6 +80,9 @@
             changeSelectedChart: function(value,vl) {
                 this.updateChartType({route: this.$route.params.element, value: value.target.value})
             }
+        },
+        mounted: function() {
+
         }
     }
 </script>
