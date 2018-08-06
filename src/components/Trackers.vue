@@ -7,11 +7,14 @@
         <br>
         <br>
         <ul class="list-group">
-            <li class="entries list-group-item d-flex justify-content-between align-items-center" v-for="(value, index) in Trackers.values">
-                <router-link class="" :to="index">{{index}}</router-link>
-                <span class="badge badge-primary badge-pill">{{value.values.length}}</span>
-                <!-- <button v-on:click="deleteEntry(index,value)">X</button> -->
-            </li>
+
+            <router-link class="list-group-item d-flex align-items-center" v-for="(value, index) in Trackers.values" tag="li" :to="index" :key="index">
+                <span>{{ index }}</span>
+                <div class="ml-auto">
+                    <span class="badge badge-primary badge-pill">{{value.values.length}}</span>
+                    <button class="badge badge-danger badge-pill btn btn-danger" v-on:click="deleteEntry(index,value,$event)">X</button>
+                </div>
+            </router-link>
         </ul>
         <br>
         <form v-on:submit="addElement">
@@ -38,7 +41,8 @@
                 e.preventDefault();
                 this.addTracker();
             },
-            deleteEntry: function(index,value) {
+            deleteEntry: function(index,value,e) {
+                e.preventDefault();
                 this.deleteTracker(index);
             }
         },

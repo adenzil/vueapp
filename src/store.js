@@ -84,6 +84,10 @@ export const store = new Vuex.Store({
 		},
 		addTracker(state) {
 			var newTrackerName = state.Trackers.newTrackerName;
+            if (!newTrackerName) {
+                return false;
+            }
+
 			if(! (newTrackerName in state.Trackers.values)) {
                 Vue.set(state.Trackers.values,newTrackerName,JSON.parse(JSON.stringify(state.newTracker)));
                 Vue.set(state.Trackers.values[newTrackerName],'name', newTrackerName);
