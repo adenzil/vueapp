@@ -41,6 +41,7 @@ export const store = new Vuex.Store({
                     values: [],
                     newKey: null,
                     newValue:null,
+                    backgroundColor: '#f87979',
                     options: options,
                     chartData: this.chartData
             	},
@@ -51,6 +52,7 @@ export const store = new Vuex.Store({
                     values: [],
                     newKey: null,
                     newValue:null,
+                    backgroundColor: '#f87979',
                     options: options,
                     chartData: this.chartData
             	},
@@ -64,6 +66,7 @@ export const store = new Vuex.Store({
             values: [],
             newKey: null,
             newValue:null,
+            backgroundColor: '#f87979',
             options: options,
             chartData: this.chartData
         },
@@ -72,7 +75,7 @@ export const store = new Vuex.Store({
                 labels: TrackerData.values.map(value => value.key),
                 datasets: [{
                    label: TrackerData.name,
-                   backgroundColor: '#f87979',
+                   backgroundColor: TrackerData.backgroundColor,
                    pointBackgroundColor: 'white',
                    borderWidth: 1,
                    pointBorderColor: '#249EBF',
@@ -150,7 +153,7 @@ export const store = new Vuex.Store({
         },
 		addTrackerData(state, payload) {
 			var currentTracker = state.Trackers.values[payload]
-			currentTracker.values.push({'key':currentTracker.newKey, 'value':currentTracker.newValue, 'edit': false})
+			currentTracker.values.push({'key':currentTracker.newKey, 'value':currentTracker.newValue, 'edit': false, 'color': 'black'})
 			currentTracker.newKey = currentTracker.newValue = null;
 		},
 		deleteTrackerData(state, payload, index) {
@@ -169,6 +172,12 @@ export const store = new Vuex.Store({
             Vue.set(state.Trackers,'values',{});
             localStorage.setItem('Trackers', JSON.stringify(state));
         },
+        updateEntryColor(state, payload) {
+            state.Trackers.values[payload.route].values[payload.index].color = payload.color;
+        },
+        updateBackgroundColor(state, payload) {
+            state.Trackers.values[payload.route].backgroundColor = payload.color;
+        }
 	}
 })
 
