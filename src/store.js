@@ -140,7 +140,9 @@ export const store = new Vuex.Store({
             }
 		},
 		deleteTracker(state, payload) {
-			Vue.delete(state.Trackers.values,payload);
+            if(confirmation()) {
+                Vue.delete(state.Trackers.values,payload);
+            }
 		},
 		updateTrackerName(state,payload) {
 
@@ -157,20 +159,26 @@ export const store = new Vuex.Store({
 			currentTracker.newKey = currentTracker.newValue = null;
 		},
 		deleteTrackerData(state, payload, index) {
-            state.Trackers.values[payload].values.splice(index,1);
-		},
+            if(confirmation()) {
+                state.Trackers.values[payload].values.splice(index,1);
+            }
+        },
         editTrackerData(state, payload) {
             state.Trackers.values[payload.route].values[payload.index].edit = !state.Trackers.values[payload.route].values[payload.index].edit;
         },
-		deleteAllTrackerData(state,payload) {
-            Vue.set(state.Trackers.values[payload], 'values', [])
-		},
-		test(state) {
-			alert('tesst');
-		},
+        deleteAllTrackerData(state,payload) {
+            if(confirmation()) {
+                Vue.set(state.Trackers.values[payload], 'values', [])
+            }
+        },
+        test(state) {
+            alert('tesst');
+        },
         deleteAllTrackers(state) {
-            Vue.set(state.Trackers,'values',{});
-            localStorage.setItem('Trackers', JSON.stringify(state));
+            if(confirmation()) {
+                Vue.set(state.Trackers,'values',{});
+                localStorage.setItem('Trackers', JSON.stringify(state));
+            }
         },
         updateEntryColor(state, payload) {
             state.Trackers.values[payload.route].values[payload.index].color = payload.color;
@@ -180,6 +188,10 @@ export const store = new Vuex.Store({
         }
 	}
 })
+
+function confirmation() {
+    return confirm("Are you sure ?");
+}
 
 store.subscribe((mutation, state) => {
 	// Store the state object as a JSON string
